@@ -22,22 +22,21 @@ import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Textarea } from "@/components/ui/textarea";
 import { Course } from "@prisma/client";
+import { formatprice } from "@/lib/format";
 
-interface DescriptionFormProps {
+interface PriceFormProps {
     initialData: Course;
     courseId: string;
 }
 
 const formSchema= z.object({
-    description: z.string().min(1,{
-        message: "Description is required",
-    })
+    price: z.coerce.number(),
 })
 
-export const DescriptionForm = ({
+export const PriceForm = ({
     initialData,
     courseId
-}: DescriptionFormProps) => {
+}: PriceFormProps) => {
 
     const [isEditing, setIsEditing] = useState(false);
 
@@ -46,7 +45,7 @@ export const DescriptionForm = ({
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-           description: initialData?.description || "",
+           price: initialData?.price || undefined,
         }
     });
 
@@ -69,14 +68,14 @@ export const DescriptionForm = ({
     return ( 
         <div className="mt-6 border bg-slate-100 rounded-md p-4">
             <div className="font-medium flex items-center justify-between">
-                Course Description
+                Course Price
                 <Button variant="ghost" onClick={toggleEdit}>
                     {isEditing ? (
                         <>Cancel</>
                     ) : (
                         <>
                         <Pencil className="h-4 w-4 mr-2" />
-                            Edit Description  
+                            Edit Price  
                         </>
                     )}
                 </Button>
@@ -89,16 +88,16 @@ export const DescriptionForm = ({
                         >
                             <FormField 
                                 control={form.control}
-                                name="description"
+                                name="price"
                                 render ={({field}) => (
                                     <FormItem>
-                                        <FormControl>
-                                            <Textarea 
-                                                disabled={isSubmitting}
-                                                placeholder="e.g. 'This course is about ...'"
-                                                {...field}
-                                            />
-                                        </FormControl>
+                                        <Input 
+                                            disabled={isSubmitting}
+                                            placeholder="Set a price for your course"
+                                            type="number"
+                                            step="0.01"
+                                            {...field}
+                                        />
                                     <FormMessage />
                                     </FormItem>
                                 )}
@@ -121,9 +120,9 @@ export const DescriptionForm = ({
             ): (
                 <p className={cn(
                     "text-sm mt-2",
-                    !initialData.description && "text-slate-500 italic"
+                    !initialData.price && "text-slate-500 italic"
                 )}>
-                    {initialData.description || "No description"}
+                    { initialData.price? formatprice(initialData.price) :  "No Price"}
                 </p>
             )}
         </div>
