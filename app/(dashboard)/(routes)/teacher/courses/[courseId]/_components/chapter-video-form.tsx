@@ -4,13 +4,13 @@ import * as z from "zod";
 import axios from "axios";
 
 import { Button } from "@/components/ui/button";
-import { ImageIcon, Pencil, PlusCircle, VideoIcon } from "lucide-react";
+import { Pencil, PlusCircle, VideoIcon } from "lucide-react";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import { Chapter, Course, MuxData } from "@prisma/client";
-import Image from "next/image";
+import { Chapter, MuxData } from "@prisma/client";
 import { FileUpload } from "@/components/file-upload";
+import MuxPlayer from "@mux/mux-player-react";
 
 interface ChapterVideoFormProps {
     initialData: Chapter & {muxData: MuxData | null};
@@ -34,7 +34,7 @@ export const ChapterVideoForm = ({
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
         try{
-            await axios.patch(`/api/courses/${courseId}/chapter/${chapterId}`, values);
+            await axios.patch(`/api/courses/${courseId}/chapters/${chapterId}`, values);
             toast.success("Chapter updated")
             toggleEdit();
             router.refresh();
@@ -80,7 +80,9 @@ export const ChapterVideoForm = ({
                 </div>
             ) : (
                 <div className="relative aspect-video mt-2">
-                    Video Uploaded!
+                    <MuxPlayer 
+                        playbackId={initialData?.muxData?.playbackId || ""}
+                    />
                 </div>
             ))}
             {isEditing && (
