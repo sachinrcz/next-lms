@@ -136,7 +136,7 @@ export const ChapterForm = ({
                                     type="submit"
                                     disabled={!isValid || isSubmitting}
                                 >
-                                    Created
+                                    Create
                                 </Button>
 
                         </form>
