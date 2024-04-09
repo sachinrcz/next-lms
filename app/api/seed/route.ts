@@ -24,8 +24,6 @@ export async function GET(req: Request){
 
     }catch(error){
         console.log("Error seeding the database categories", error)
-    }finally{
-        await database.$disconnect();
     }
 
     return new NextResponse(null, {status:400});
